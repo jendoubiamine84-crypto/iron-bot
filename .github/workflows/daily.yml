@@ -1,0 +1,34 @@
+
+name: IRON BOT Daily
+
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-daily-idea:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run IRON BOT
+        run: python main.py
+
+      - name: Save daily idea
+        run: |
+          git config user.name "IRON BOT"
+          git config user.email "actions@github.com"
+          git add videos/
+          git diff --cached --quiet || git commit -m "Daily fitness idea"
+          git push
